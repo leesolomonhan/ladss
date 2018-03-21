@@ -151,7 +151,10 @@ The user moves a cube around the board trying to knock balls into a cone
 					}
 
 			})
-
+	
+			var wall = createWall(0xffaa00,50,3,1);
+      			wall.position.set(10,0,10);
+      			scene.add(wall);
 
 			//playGameMusic();
 
@@ -316,7 +319,13 @@ The user moves a cube around the board trying to knock balls into a cone
 		return mesh;
 	}
 
-
+	  function createWall(color,w,h,d){
+    		var geometry = new THREE.BoxGeometry( w, h, d);
+    		var material = new THREE.MeshLambertMaterial( { color: color} );
+    		mesh = new Physijs.BoxMesh( geometry, material, 0 );
+    		mesh.castShadow = true;
+    		return mesh;
+ 	}
 
 	function createGround(image){
 		// creating a textured plane which receives shadows
