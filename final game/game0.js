@@ -18,7 +18,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	var cone;
 
 	var npc, npc2;
-
+	var startBall = 20;
 	var endScene, endCamera, endText;
 	var loseScene, loseCamera, loseText;
 
