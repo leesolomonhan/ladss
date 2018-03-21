@@ -439,7 +439,6 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.lookAt(0,4,10);
 			npc.position.set(30,10,-30);
 			npc2.position.set(-30,10,30);
-			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
 			addBalls();
@@ -454,7 +453,6 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.lookAt(0,4,10);
 			npc.position.set(30,10,-30);
 			npc2.position.set(-30,10,30);
-			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
 			addBalls();
