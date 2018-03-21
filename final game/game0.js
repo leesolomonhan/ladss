@@ -566,7 +566,8 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			case "main":
 				updateAvatar();
-	    	scene.simulate();
+				updateNPC();
+	    			scene.simulate();
 				if (gameState.camera!= 'none'){
 					renderer.render( scene, gameState.camera );
 				}
