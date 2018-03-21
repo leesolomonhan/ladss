@@ -508,7 +508,14 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 	}
 
-
+	function updateNPC(){
+		npc.lookAt(avatar.position);
+		npc.__dirtyPosition = true;
+		var distance = npc.position.distanceTo( avatar.position );
+		if (distance <= 50){
+			npc.setLinearVelocity(npc.getWorldDirection().multiplyScalar(8));
+		}
+	}
 
 
   function updateAvatar(){
