@@ -12,12 +12,14 @@ The user moves a cube around the board trying to knock balls into a cone
 	var scene, renderer;  // all threejs programs need these
 	var camera, avatarCam;  // we have two cameras in the main scene
 	var avatar;
+	var textMesh;
 	// here are some mesh objects ...
 
 	var cone;
 
 
 	var endScene, endCamera, endText;
+	var loseScene, loseCamera, loseText;
 
 
 
@@ -53,6 +55,20 @@ The user moves a cube around the board trying to knock balls into a cone
 		endCamera.lookAt(0,0,0);
 
 	}
+	
+	function createLoseScene(){
+		loseScene = initScene();
+		loseText = createSkyBox('youlose.png',6);
+		//endText.rotateX(Math.PI);
+		loseScene.add(loseText);
+		var light2 = createPointLight();
+		light2.position.set(0,200,20);
+		loseScene.add(light2);
+		loseCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		loseCamera.position.set(0,50,1);
+		loseCamera.lookAt(0,0,0);
+
+	}
 
 	/**
 	  To initialize the scene, we initialize each of its components
@@ -61,7 +77,9 @@ The user moves a cube around the board trying to knock balls into a cone
       initPhysijs();
 			scene = initScene();
 			createEndScene();
+			initTextMesh();
 			initRenderer();
+			createLoseScene();
 			createMainScene();
 	}
 
@@ -111,28 +129,65 @@ The user moves a cube around the board trying to knock balls into a cone
 	function randN(n){
 		return Math.random()*n;
 	}
+	function initTextMesh(){
+		var loader = new THREE.FontLoader();
+		loader.load( '/fonts/helvetiker_regular.typeface.json',
+								 createTextMesh);
+		console.log("preparing to load the font");
+
+	}
+	function createTextMesh(font) {
+		var textGeometry =
+			new THREE.TextGeometry( 'Collect 20 Balls to win!',
+					{
+						font: font,
+						size: 5,
+						height: 0.2,
+						curveSegments: 12,
+						bevelEnabled: true,
+						bevelThickness: 0.01,
+						bevelSize: 0.08,
+						bevelSegments: 5
+					}
+				);
+
+		var textMaterial =
+			new THREE.MeshLambertMaterial( { color: 0xaaaaff } );
+
+		textMesh =
+			new THREE.Mesh( textGeometry, textMaterial );
+
+		// center the text mesh
+		textMesh.translateX(-35);
+		textMesh.translateY(10);
+
+		scene.add(textMesh);
+
+		console.log("added textMesh to scene");
+	}
 
 
 
 
 	function addBalls(){
-		var numBalls = 2
+		var numBalls = startBall;
 
 
 		for(i=0;i<numBalls;i++){
 			var ball = createBall();
-			ball.position.set(randN(20)+15,30,randN(20)+15);
+			ball.position.set(randN(80)-50,30,randN(80)-50);
 			scene.add(ball);
 
 			ball.addEventListener( 'collision',
 				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-					if (other_object==cone){
+					if (other_object==avatar){
 						console.log("ball "+i+" hit the cone");
 						soundEffect('good.wav');
 						gameState.score += 1;  // add one to the score
 						if (gameState.score==numBalls) {
 							gameState.scene='youwon';
 						}
+            //scene.remove(ball);  // this isn't working ...
 						// make the ball drop below the scene ..
 						// threejs doesn't let us remove it from the schene...
 						this.position.y = this.position.y - 100;
@@ -339,9 +394,34 @@ The user moves a cube around the board trying to knock balls into a cone
 		//console.dir(event);
 		// first we handle the "play again" key in the "youwon" scene
 		if (gameState.scene == 'youwon' && event.key=='r') {
+			avatar.__dirtyRotation = true;
+			avatar.rotation.set(0,0,0);
+			avatar.__dirtyPosition = true;
+			avatar.position.set(-40,20,-40);
+			avatarCam.lookAt(0,4,10);
+			npc.position.set(30,10,-30);
+			npc2.position.set(-30,10,30);
+			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
-			gameState.score = 0;
+			startBall = gameState.score;
 			addBalls();
+			gameState.score = 0;
+			gameState.health = 10;
+			return;
+		} else if (gameState.scene == 'youlose' && event.key=='r') {
+			avatar.__dirtyRotation = true;
+			avatar.rotation.set(0,0,0);
+			avatar.__dirtyPosition = true;
+			avatar.position.set(-40,20,-40);
+			avatarCam.lookAt(0,4,10);
+			npc.position.set(30,10,-30);
+			npc2.position.set(-30,10,30);
+			monkey.position.set(0,4,0);
+			gameState.scene = 'main';
+			startBall = gameState.score;
+			addBalls();
+			gameState.score = 0;
+			gameState.health = 10;
 			return;
 		}
 
@@ -429,12 +509,22 @@ The user moves a cube around the board trying to knock balls into a cone
 	function animate() {
 
 		requestAnimationFrame( animate );
+		
+		if (textMesh){
+			textMesh.translateX(35);
+			textMesh.rotateY(-0.01);
+			textMesh.translateX(-35);
+		}
 
 		switch(gameState.scene) {
 
 			case "youwon":
 				endText.rotateY(0.005);
 				renderer.render( endScene, endCamera );
+				break;
+				
+			case "youlose":
+				renderer.render( loseScene, loseCamera );
 				break;
 
 			case "main":
