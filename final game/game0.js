@@ -32,7 +32,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		    camera:camera}
 
 	var gameState =
-	     {score:0, health:10, scene:'main', camera:'none' }
+	     {score:0, health:10, scene:'start', camera:'none' }
 
 
 	// Here is the main game control
@@ -42,7 +42,17 @@ The user moves a cube around the board trying to knock balls into a cone
 
 
 
-
+	function createStartScene(){
+		startScene= initScene();
+		startText = createSkyBox('p.png', 10);
+		startScene.add(startText);
+		var light0 = createPointLight();
+		light0.position.set(0,200,20);
+		startScene.add(light0);
+		startCamera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+		startCamera.position.set(0,50,1);
+		startCamera.lookAt(0,0,0);
+	}
 	function createEndScene(){
 		endScene = initScene();
 		endText = createSkyBox('youwon.png',10);
@@ -440,6 +450,11 @@ The user moves a cube around the board trying to knock balls into a cone
 		console.log("Keydown:"+event.key);
 		//console.dir(event);
 		// first we handle the "play again" key in the "youwon" scene
+		
+		if(gameState.scene=='start' && event.key=='p'){
+			gameState.scene='main';
+			return;
+		}
 		if (gameState.scene == 'youwon' && event.key=='r') {
 			avatar.__dirtyRotation = true;
 			avatar.rotation.set(0,0,0);
@@ -569,7 +584,9 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 
 		switch(gameState.scene) {
-
+			case "start":
+				render.render(startScene, startCamera);
+				break;
 			case "youwon":
 				endText.rotateY(0.005);
 				renderer.render( endScene, endCamera );
