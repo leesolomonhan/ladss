@@ -216,7 +216,6 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	function addBalls(){
 		var numBalls = startBall;
-		var blueBall = createBall(blue);
 
 		for(i=0;i<numBalls;i++){
 			var ball = createBall();
@@ -225,9 +224,6 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			ball.addEventListener( 'collision',
 				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-					if(other_object==blueBall){
-						gameState.score+=4;
-					}
 					if (other_object==avatar){
 						console.log("ball "+i+" hit the cone");
 						soundEffect('good.wav');
@@ -244,6 +240,21 @@ The user moves a cube around the board trying to knock balls into a cone
 				}
 			)
 		}
+		var ball1 = blueBall();
+			ball1.position.set(randN(80)-50,30,randN(80)-50);
+			scene.add(ball1);
+
+			ball1.addEventListener( 'collision',
+				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+					if(other_object==avatar){
+						gameState.score+=4;
+						console.log("ball "+i+" hit the cone");
+						soundEffect('good.wav');
+						this.position.y = this.position.y - 100;
+						this.__dirtyPosition = true;
+						}
+				}
+			)
 	}
 
 
@@ -472,6 +483,16 @@ The user moves a cube around the board trying to knock balls into a cone
 		mesh.castShadow = true;
 		return mesh;
 	}
+	function blueBall(){
+		//var geometry = new THREE.SphereGeometry( 4, 20, 20);
+		var geometry = new THREE.SphereGeometry( 1, 16, 16);
+		var material = new THREE.MeshLambertMaterial( { color: 0x4040ff} );
+		var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
+    		var mesh = new Physijs.BoxMesh( geometry, material );
+		mesh.setDamping(0.1,0.1);
+		mesh.castShadow = true;
+		return mesh;
+	}
 
 
 
@@ -627,6 +648,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	gameState.score = 0;
 	gameState.health = 10;
     }
+  }
 	  function updateMonkeyJSON(){
 		var t = clock.getElapsedTime();
 		monkey.lookAt(avatar.position);
