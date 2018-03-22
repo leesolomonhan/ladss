@@ -16,7 +16,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	// here are some mesh objects ...
 
 	var npc, npc2;
-	var startBall = 20;z
+	var startBall = 20;
 	var endScene, endCamera, endText;
 	var loseScene, loseCamera, loseText;
 
@@ -608,7 +608,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		switch(gameState.scene) {
 			case "start":
-				render.render(startScene, startCamera);
+				renderer.render(startScene, startCamera);
 				break;
 			case "youwon":
 				renderer.render( endScene, endCamera );
@@ -634,6 +634,9 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		//draw heads up display ..
 	  var info = document.getElementById("info");
-		info.innerHTML='<div style="font-size:24pt">Score: ' + gameState.score + '</div>';
+		info.innerHTML='<div style="font-size:24pt">Score: ' + gameState.score
+		+ + " Health: "
+		+ gameState.health
+		+ '</div>';
 
 	}
