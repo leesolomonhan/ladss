@@ -11,7 +11,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	// in the animation code
 	var scene, renderer;  // all threejs programs need these
 	var textMesh;
-	var camera, avatarCam;  // we have two cameras in the main scene
+	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
 	var avatar;
 	// here are some mesh objects ...
 
@@ -89,6 +89,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			createEndScene();
 			initRenderer();
 			initTextMesh();
+			createStartScene();
 			createMainScene();
 			createLoseScene();
 	}
@@ -144,9 +145,6 @@ The user moves a cube around the board trying to knock balls into a cone
 
      			 })
 		
-			//cone = createConeMesh(4,6);
-			//cone.position.set(10,3,7);
-			//scene.add(cone);
 		
 			npc2 = createTorusKnot(0xFF69B4,1,2,4);
 
@@ -393,20 +391,6 @@ The user moves a cube around the board trying to knock balls into a cone
 		avatarCam.lookAt(0,4,10);
 		mesh.add(avatarCam);
 
-		return mesh;
-	}
-
-
-	function createConeMesh(r,h){
-		var geometry = new THREE.ConeGeometry( r, h, 32);
-		var texture = new THREE.TextureLoader().load( '../images/tile.jpg' );
-		texture.wrapS = THREE.RepeatWrapping;
-		texture.wrapT = THREE.RepeatWrapping;
-		texture.repeat.set( 1, 1 );
-		var material = new THREE.MeshLambertMaterial( { color: 0xffffff,  map: texture ,side:THREE.DoubleSide} );
-		var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
-		var mesh = new Physijs.ConeMesh( geometry, pmaterial, 0 );
-		mesh.castShadow = true;
 		return mesh;
 	}
 
