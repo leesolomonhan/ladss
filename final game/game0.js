@@ -18,7 +18,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	var cone;
 
 	var npc, npc2;
-	var startBall = 20;
+	var startBall = 20;z
 	var endScene, endCamera, endText;
 	var loseScene, loseCamera, loseText;
 
@@ -118,11 +118,12 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
-			avatar = createAvatar();
-			avatar.translateY(20);
+			initSuzanne();
+			//avatar = createAvatar();
+			//avatar.translateY(20);
 			avatarCam.translateY(-4);
 			avatarCam.translateZ(3);
-			scene.add(avatar);
+			//scene.add(avatar);
 			gameState.camera = avatarCam;
 
 			addBalls();
@@ -144,8 +145,8 @@ The user moves a cube around the board trying to knock balls into a cone
 				}
 
      			 })
-		
-		
+
+
 			npc2 = createTorusKnot(0xFF69B4,1,2,4);
 
 			npc2.position.set(-30,10,30);
@@ -159,7 +160,7 @@ The user moves a cube around the board trying to knock balls into a cone
 					}
 
 			})
-	
+
 			var wall = createWall(0xffaa00,50,3,1);
       			wall.position.set(10,0,10);
       			scene.add(wall);
@@ -167,7 +168,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			//playGameMusic();
 
 	}
-	
+
 
 	function randN(n){
 		return Math.random()*n;
@@ -377,22 +378,45 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	}
 
-	function createAvatar(){
-		//var geometry = new THREE.SphereGeometry( 4, 20, 20);
-		var geometry = new THREE.BoxGeometry( 5, 5, 6);
-		var material = new THREE.MeshLambertMaterial( { color: 0xffff00} );
-		var pmaterial = new Physijs.createMaterial(material,0.9,0.5);
-		//var mesh = new THREE.Mesh( geometry, material );
-		var mesh = new Physijs.BoxMesh( geometry, pmaterial );
-		mesh.setDamping(0.1,0.1);
-		mesh.castShadow = true;
+	function initSuzanne() {
+			// Adds a Suzanne object exported as an 'obj' file from Blender.
+			// Note- this is *heavily* adapted from the code from in class.
+			var loader = new THREE.OBJLoader();
+			loader.load("../models/suzanne_for_pa02.obj",
+					function ( obj ) {
+						console.log("loading suzanne.obj file");
+						//console.dir( obj );
+						//console.add( obj );
+						//obj.castShadow = true;
+						suzanne = obj;
 
-		avatarCam.position.set(0,4,0);
-		avatarCam.lookAt(0,4,10);
-		mesh.add(avatarCam);
+						var geometry = suzanne.children[0].geometry;
+						var material = suzanne.children[0].material;
+						suzanne = new Physijs.BoxMesh(geometry, material);
 
-		return mesh;
-	}
+						avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
+						gameState.camera = avatarCam;
+
+						avatarCam.position.set(0,6,-15);
+						avatarCam.lookAt(0,4,10);
+						suzanne.add(avatarCam);
+						suzanne.position.set(-40,20,-40);
+						suzanne.castShadow = true;
+						scene.add( suzanne  );
+						avatar=suzanne;
+
+						console.log("suzanne has been added");
+					},
+
+					function(xhr) {
+						console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+					},
+
+					function(err) {
+						console.log("error in loading: "+err);
+					}
+				)
+		}
 
 
 	function createBall(){
@@ -434,7 +458,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		console.log("Keydown:"+event.key);
 		//console.dir(event);
 		// first we handle the "play again" key in the "youwon" scene
-		
+
 		if(gameState.scene=='start' && event.key=='p'){
 			gameState.scene='main';
 			return;
@@ -471,6 +495,10 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		// this is the regular scene
 		switch (event.key){
+			// added cheat codes
+			case "h": gameState.health += 1; break;
+			case "j": gameState.scene = "youwon"; break;
+
 			// change the way the avatar is moving
 			case "w": controls.fwd = true;  break;
 			case "s": controls.bwd = true; break;
