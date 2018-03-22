@@ -12,7 +12,7 @@ The user moves a cube around the board trying to knock balls into a cone
 	var scene, renderer;  // all threejs programs need these
 	var textMesh;
 	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
-	var avatar; var suzanne;
+	var avatar; var suzanne; var monkey;
 	// here are some mesh objects ...
 
 	var npc, npc2;
@@ -117,6 +117,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			// create the avatar
 			avatarCam = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 0.1, 1000 );
 			initSuzanne();
+			initSuzanneJSON();
 			//avatar = createAvatar();
 			//avatar.translateY(20);
 			avatarCam.translateY(-4);
@@ -421,6 +422,35 @@ The user moves a cube around the board trying to knock balls into a cone
 					}
 				)
 		}
+	
+	function initSuzanneJSON(){
+	//load the monkey avatar into the scene, and add a Physics mesh and camera
+		var loader = new THREE.JSONLoader();
+		loader.load("../models/suzanne.json",
+			function ( geometry, materials ) {
+				console.log("loading suzanne");
+				var material = //materials[ 0 ];
+				new THREE.MeshLambertMaterial( { color: 0x00ff00 } );
+				//geometry.scale.set(0.5,0.5,0.5);
+				monkey = new Physijs.BoxMesh( geometry, material );
+
+				monkey.position.set(0,4,0);
+				monkey.castShadow = true;
+				scene.add( monkey  );
+
+				monkey.addEventListener('collision',function(other_object){
+					if (other_object == avatar){
+						gameState.scene='youlose';
+						soundEffect('lose.wav');
+					}
+					this.__dirtyPosition = true;
+				})
+			},
+			function(xhr){
+				console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );},
+			function(err){console.log("error in loading: "+err);}
+		)
+	}
 
 
 	function createBall(){
@@ -475,6 +505,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.lookAt(0,4,10);
 			npc.position.set(30,10,-30);
 			npc2.position.set(-30,10,30);
+			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
 			addBalls();
@@ -489,6 +520,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.lookAt(0,4,10);
 			npc.position.set(30,10,-30);
 			npc2.position.set(-30,10,30);
+			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
 			addBalls();
@@ -595,6 +627,17 @@ The user moves a cube around the board trying to knock balls into a cone
 	gameState.score = 0;
 	gameState.health = 10;
     }
+	  function updateMonkeyJSON(){
+		var t = clock.getElapsedTime();
+		monkey.lookAt(avatar.position);
+		monkey.__dirtyPosition = true;
+		var distance = monkey.position.distanceTo( avatar.position );
+		if (distance <= 100){
+			monkey.setLinearVelocity(monkey.getWorldDirection().multiplyScalar(1));
+			monkey.material.emissive.r = Math.abs(Math.sin(t));
+			monkey.material.color.b=0
+	}
+	  
 
 	}
 
@@ -623,6 +666,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "main":
 				updateAvatar();
 				updateNPC();
+				updateMonkeyJSON();
 				edgeCam.lookAt(avatar.position);
 	    			scene.simulate();
 				if (gameState.camera!= 'none'){
