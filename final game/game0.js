@@ -588,7 +588,6 @@ The user moves a cube around the board trying to knock balls into a cone
 				render.render(startScene, startCamera);
 				break;
 			case "youwon":
-				endText.rotateY(0.005);
 				renderer.render( endScene, endCamera );
 				break;
 			case "youlose":
