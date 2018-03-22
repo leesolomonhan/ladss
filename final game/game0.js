@@ -12,10 +12,8 @@ The user moves a cube around the board trying to knock balls into a cone
 	var scene, renderer;  // all threejs programs need these
 	var textMesh;
 	var camera, avatarCam, edgeCam;  // we have two cameras in the main scene
-	var avatar;
+	var avatar; var suzanne;
 	// here are some mesh objects ...
-
-	var cone;
 
 	var npc, npc2;
 	var startBall = 20;z
@@ -84,14 +82,14 @@ The user moves a cube around the board trying to knock balls into a cone
 	  To initialize the scene, we initialize each of its components
 	*/
 	function init(){
-      initPhysijs();
-			scene = initScene();
-			createEndScene();
-			initRenderer();
-			initTextMesh();
-			createStartScene();
-			createMainScene();
-			createLoseScene();
+      		initPhysijs();
+		scene = initScene();
+		createEndScene();
+		initRenderer();
+		initTextMesh();
+		createStartScene();
+		createMainScene();
+		createLoseScene();
 	}
 
 
@@ -125,6 +123,9 @@ The user moves a cube around the board trying to knock balls into a cone
 			avatarCam.translateZ(3);
 			//scene.add(avatar);
 			gameState.camera = avatarCam;
+		
+			edgeCam = new THREE.PerspectiveCamera( 120, window.innerWidth / window.innerHeight, 0.1, 1000 );
+      			edgeCam.position.set(20,20,10);
 
 			addBalls();
 
@@ -619,6 +620,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			case "main":
 				updateAvatar();
 				updateNPC();
+				edgeCam.lookAt(avatar.position);
 	    			scene.simulate();
 				if (gameState.camera!= 'none'){
 					renderer.render( scene, gameState.camera );
