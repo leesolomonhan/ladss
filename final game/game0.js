@@ -17,6 +17,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	var npc, npc2;
 	var startBall = 20;
+	var startBlue = 1;
 	var endScene, endCamera, endText;
 	var loseScene, loseCamera, loseText;
 
@@ -30,7 +31,7 @@ The user moves a cube around the board trying to knock balls into a cone
 		    camera:camera}
 
 	var gameState =
-	     {score:0, health:10, scene:'start', camera:'none' }
+	     {score:0, health:10, scene:'start',  blue: 0, camera:'none' }
 
 
 	// Here is the main game control
@@ -240,19 +241,22 @@ The user moves a cube around the board trying to knock balls into a cone
 				}
 			)
 		}
-		var ball1 = blueBall();
+		var numBlue = startBlue;
+		for(i=0;i<startBlue;i++){
+			var ball1 = blueBall();
 			ball1.position.set(randN(80)-50,30,randN(80)-50);
 			scene.add(ball1);
 
 			ball1.addEventListener( 'collision',
-				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
-					if(other_object==avatar){
-						gameState.score+=4;
-						console.log("ball "+i+" hit the cone");
-						soundEffect('good.wav');
-						this.position.y = this.position.y - 100;
-						this.__dirtyPosition = true;
-						}
+			function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+				if(other_object==avatar){
+					gameState.score+=4;
+					console.log("ball "+i+" hit the cone");
+					soundEffect('good.wav');
+					gameState.blue += 1;
+					this.position.y = this.position.y - 100;
+					this.__dirtyPosition = true;
+					}
 				}
 			)
 	}
@@ -529,6 +533,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
+			startBlue = gameState.blue;
 			addBalls();
 			gameState.score = 0;
 			gameState.health = 10;
@@ -544,6 +549,7 @@ The user moves a cube around the board trying to knock balls into a cone
 			monkey.position.set(0,4,0);
 			gameState.scene = 'main';
 			startBall = gameState.score;
+			startBlue = gameState.blue;
 			addBalls();
 			gameState.score = 0;
 			gameState.health = 10;
