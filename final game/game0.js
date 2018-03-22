@@ -215,7 +215,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	function addBalls(){
 		var numBalls = startBall;
-
+		var blueBall = createBall(blue);
 
 		for(i=0;i<numBalls;i++){
 			var ball = createBall();
@@ -224,6 +224,9 @@ The user moves a cube around the board trying to knock balls into a cone
 
 			ball.addEventListener( 'collision',
 				function( other_object, relative_velocity, relative_rotation, contact_normal ) {
+					if(other_object==blueBall){
+						gameState.score+=4;
+					}
 					if (other_object==avatar){
 						console.log("ball "+i+" hit the cone");
 						soundEffect('good.wav');
