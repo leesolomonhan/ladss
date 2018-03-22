@@ -85,11 +85,11 @@ The user moves a cube around the board trying to knock balls into a cone
       		initPhysijs();
 		scene = initScene();
 		createEndScene();
-		initRenderer();
 		initTextMesh();
 		createStartScene();
-		createMainScene();
 		createLoseScene();
+		initRenderer();
+		createMainScene();
 	}
 
 
@@ -634,9 +634,9 @@ The user moves a cube around the board trying to knock balls into a cone
 
 		//draw heads up display ..
 	  var info = document.getElementById("info");
-		info.innerHTML='<div style="font-size:24pt">Score: ' + gameState.score
-		+ + " Health: "
-		+ gameState.health
+		info.innerHTML='<div style="font-size:24pt">Score: ' 
+		+ gameState.score
+		+  " Health: "+ gameState.health
 		+ '</div>';
 
 	}
