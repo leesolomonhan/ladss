@@ -566,8 +566,18 @@ The user moves a cube around the board trying to knock balls into a cone
 		}
 
     if (controls.reset){
-      avatar.__dirtyPosition = true;
-      avatar.position.set(40,10,40);
+      	avatar.__dirtyRotation = true;
+	avatar.rotation.set(0,0,0);
+	avatar.__dirtyPosition = true;
+	avatar.position.set(-40,20,-40);
+	avatarCam.lookAt(0,4,10);
+	npc.position.set(30,10,-30);
+	npc2.position.set(-30,10,30);
+	gameState.scene = 'main';
+	startBall = gameState.score;
+	addBalls();
+	gameState.score = 0;
+	gameState.health = 10;
     }
 
 	}
