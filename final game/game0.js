@@ -44,7 +44,7 @@ The user moves a cube around the board trying to knock balls into a cone
 
 	function createStartScene(){
 		startScene= initScene();
-		startText = createSkyBox('p.png', 10);
+		startText = createSkyBox('start.png', 4);
 		startScene.add(startText);
 		var light0 = createPointLight();
 		light0.position.set(0,200,20);
